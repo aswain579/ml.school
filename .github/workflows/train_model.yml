@@ -29,7 +29,7 @@ jobs:
       # Step 5: Start MLflow server in the background
       - name: Start MLflow Server
         run: |
-          mlflow server --host 127.0.0.1 --port 5000
+          nohup mlflow server --host 127.0.0.1 --port 5000 &
 
       # Step 4: Run the training script
       - name: Train the model
