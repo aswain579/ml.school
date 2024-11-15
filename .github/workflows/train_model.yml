@@ -30,4 +30,4 @@ jobs:
       - name: Train the model
         run: |
           export PYTHONPATH="${PYTHONPATH}:$(pwd)/pipelines"  
-          python pipelines/train.py
+          python pipelines/training.py
