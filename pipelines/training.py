@@ -93,6 +93,7 @@ class Training(FlowSpec, FlowMixin):
             # recognize which experiment corresponds with each run.
             run = mlflow.start_run(run_name=current.run_id)
             self.mlflow_run_id = run.info.run_id
+            logging.info("Metaflow is ok")
         except Exception as e:
             message = f"Failed to connect to MLflow server {self.mlflow_tracking_uri}."
             raise RuntimeError(message) from e
