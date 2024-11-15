@@ -28,4 +28,6 @@ jobs:
 
       # Step 4: Run the training script
       - name: Train the model
-        run: python training.py
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)/pipelines"  
+          python pipelines/train.py
