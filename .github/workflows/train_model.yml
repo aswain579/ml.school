@@ -26,14 +26,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 5: Start MLflow server in the background
+      # Step 4: Start MLflow server in the background
       - name: Start MLflow Server
         run: |
           nohup mlflow server --host 127.0.0.1 --port 5000 &
 
-      # Step 4: Run the training script
+      # Step 5: Run the training script
       - name: Train the model
         run: |
           export MLFLOW_TRACKING_URI="http://127.0.0.1:5000"
-          export PYTHONPATH="${PYTHONPATH}:$(pwd)/pipelines"  
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)/pipelines"
+          python pipelines/training.py --environment=pypi run
+
+      # Step 5: Run the metaflow server
+      - name: Train the model
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)/pipelines"
           python pipelines/training.py --environment=pypi card server
