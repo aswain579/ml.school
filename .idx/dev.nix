@@ -12,9 +12,14 @@ in
     pkgs.python311Packages.pip
     pkgs.awscli2
     pkgs.azure-cli
+    pkgs.sqlite
+    pkgs.openssh
   ];
 
   env = pkgs.lib.recursiveUpdate {
+    MAMBA_ROOT_PREFIX = "/run/micromamba";
+    # METAFLOW_DATASTORE_SYSROOT_LOCAL = "/run/.metaflow";
+    # METAFLOW_CARD_LOCALROOT = "/run/.metaflow/mf.cards";
     KERAS_BACKEND = "jax";
     ENDPOINT_NAME = "penguins";
     MLFLOW_TRACKING_URI = "http://127.0.0.1:5000";
@@ -31,36 +36,19 @@ in
       "charliermarsh.ruff"
     ];
 
-    # Enable previews
-    previews = {
-      enable = true;
-      previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
-      };
-    };
-
     workspace = {
       onCreate = {
         python-venv = ''
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install -r requirements.txt
+          pip install -U pip && pip install -r requirements.txt
         '';
 
         environment = ''
           cat << EOF >> .env
-          KERAS_BACKEND = $KERAS_BACKEND
-          ENDPOINT_NAME = $ENDPOINT_NAME 
-          MLFLOW_TRACKING_URI = $MLFLOW_TRACKING_URI
+          KERAS_BACKEND=$KERAS_BACKEND
+          ENDPOINT_NAME=$ENDPOINT_NAME 
+          MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI
           EOF
         '';
 
@@ -94,7 +82,7 @@ EOL
         # watch-backend = "npm run watch-backend";
         mlflow-server = ''
           source .venv/bin/activate
-          mlflow server -h 127.0.0.1 -p 5000
+          mlflow server -h 127.0.0.1 -p 5000 --backend-store-uri sqlite:////run/mlflow.db --default-artifact-root /run/mlartifacts
         '';
       };
     };
